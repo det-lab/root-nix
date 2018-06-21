@@ -17,7 +17,7 @@ in
 
     nativeBuildInputs = [ pkgconfig ];
     buildInputs = [ cmake pcre python2 zlib libxml2 lz4 lzma gsl xxHash ]
-      ++ stdenv.lib.optionals (!stdenv.isDarwin) [ libX11 libXpm libXft libXext libGLU_combined ]
+      ++ stdenv.lib.optionals (!stdenv.isDarwin) [ xlibs.libX11 xlibs.libXpm xlibs.libXft xlibs.libXext libGLU_combined ]
       ++ stdenv.lib.optionals (stdenv.isDarwin) [ Cocoa OpenGL ]
       ;
 
