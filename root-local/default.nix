@@ -2,14 +2,13 @@
 with pkgs;
 
 let 
-inherit stdenv, fetchurl, fetchpatch, cmake, pcre, pkgconfig, python2
-, libX11, libXpm, libXft, libXext, libGLU_combined, zlib, libxml2, lz4, lzma, gsl, xxHash
-, Cocoa, OpenGL, noSplash ? false;
+inherit stdenv fetchurl fetchpatch cmake pcre pkgconfig python2 libX11 libXpm libXft libXext libGLU_combined zlib libxml2 lz4 lzma gsl xxHash Cocoa OpenGL;
 in
 {
-  stdenv.mkDerivation rec {
+  root = stdenv.mkDerivation rec {
     name = "root-fftw-${version}";
     version = "6.12.06";
+    noSplash = false;
 
     src = fetchurl {
       url = "https://root.cern.ch/download/root_v${version}.source.tar.gz";
@@ -79,5 +78,5 @@ in
       platforms = stdenv.lib.platforms.unix;
       maintainers = with stdenv.lib.maintainers; [ veprbl ];
     };
-  }
+  };
 }

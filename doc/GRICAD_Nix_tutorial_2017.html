@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Blog of the HPC team of GRICAD by Gricad</title>
+
+    <link href="Blog%20of%20the%20HPC%20team%20of%20GRICAD%20by%20Gricad_files/css.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="Blog%20of%20the%20HPC%20team%20of%20GRICAD%20by%20Gricad_files/style.css">
+    <script src="Blog%20of%20the%20HPC%20team%20of%20GRICAD%20by%20Gricad_files/scale.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <div class="logo"><a href="http://gricad.univ-grenoble-alpes.fr/" title="Gricad"><img src="Blog%20of%20the%20HPC%20team%20of%20GRICAD%20by%20Gricad_files/logo_gricad.svg"></a></div>
+        <div class="entete"><h1>Blog of the HPC team of GRICAD</h1>
+        
+          <p>Sharing technical stuff about system and network administration of High Performance Computing facilities.
+</p>
+        
+        </div>
+        <p class="view"><a href="https://github.com/Gricad/calcul">View the Project on GitHub <small></small></a></p>
+        <ul class="menu">
+        
+          <li><a href="https://gricad.github.io/calcul/"><strong>Index</strong></a></li>
+          <li><a href="https://gricad.github.io/calcul/about"><strong>About</strong></a></li>
+        </ul>
+      </header>
+      <section>
+
+      <article class="post" itemscope="" itemtype="http://schema.org/BlogPosting">
+
+<!-- Look the author details up from the site config. -->
+
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Nix tutorial</h1>
+    <p class="post-meta"><time datetime="2017-07-04T00:00:00+00:00" itemprop="datePublished">Jul 4, 2017</time> • <span itemprop="author" itemscope="" itemtype="http://schema.org/Person"><span itemprop="name">calcul-team</span></span></p>
+
+<!-- Output author details if some exist. -->
+
+    <span>
+        <!-- Personal Info. -->
+        Written by <a href="https://gricad.univ-grenoble-alpes.fr/" target="_blank">GRICAD calcul</a>
+    </span>
+
+
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>table of content</p>
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+  <li><a href="#using-nix-packages-manager" id="markdown-toc-using-nix-packages-manager">Using Nix packages manager</a>    <ul>
+      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+      <li><a href="#install-nix-single-user-mode" id="markdown-toc-install-nix-single-user-mode">Install Nix (single user mode)</a></li>
+      <li><a href="#uninstall-nix" id="markdown-toc-uninstall-nix">Uninstall Nix</a></li>
+      <li><a href="#working-with-profiles--create-several-user-environments" id="markdown-toc-working-with-profiles--create-several-user-environments">Working with profiles : create several user environments</a></li>
+    </ul>
+  </li>
+  <li><a href="#nix-basics" id="markdown-toc-nix-basics">Nix basics</a>    <ul>
+      <li><a href="#search-install-remove-a-package-with-nix" id="markdown-toc-search-install-remove-a-package-with-nix">Search, install, remove a package with nix</a></li>
+      <li><a href="#list-installed-packages" id="markdown-toc-list-installed-packages">List installed packages</a></li>
+      <li><a href="#profile-rollback-and-generations" id="markdown-toc-profile-rollback-and-generations">Profile rollback and generations</a></li>
+      <li><a href="#update-packages" id="markdown-toc-update-packages">Update packages</a></li>
+      <li><a href="#channel-and-nix_path" id="markdown-toc-channel-and-nix_path">Channel and NIX_PATH</a></li>
+    </ul>
+  </li>
+  <li><a href="#package-development" id="markdown-toc-package-development">Package development</a>    <ul>
+      <li><a href="#your-first-nix-expression-a-basic-hello-package" id="markdown-toc-your-first-nix-expression-a-basic-hello-package">Your first Nix expression: a basic ‘‘hello’’ package</a>        <ul>
+          <li><a href="#lets-build-our-package" id="markdown-toc-lets-build-our-package">Let’s build our package!</a></li>
+          <li><a href="#debugging-with-nix-shell" id="markdown-toc-debugging-with-nix-shell">Debugging with nix-shell</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#how-to-add-a-package-to-nixpkgs" id="markdown-toc-how-to-add-a-package-to-nixpkgs">How to add a package to nixpkgs</a>    <ul>
+      <li><a href="#get-a-local-copy-of-the-nixpkgs-tree" id="markdown-toc-get-a-local-copy-of-the-nixpkgs-tree">Get a local copy of the nixpkgs tree</a></li>
+      <li><a href="#find-a-good-place-for-your-package-and-write-a-nix-expression" id="markdown-toc-find-a-good-place-for-your-package-and-write-a-nix-expression">Find a good place for your package and write a nix expression</a>        <ul>
+          <li><a href="#example-the-oned-package-derivation" id="markdown-toc-example-the-oned-package-derivation">Example: the “oned” package derivation</a></li>
+          <li><a href="#another-derivation-for-oned" id="markdown-toc-another-derivation-for-oned">Another derivation for oned</a></li>
+        </ul>
+      </li>
+      <li><a href="#building-and-installing-the-package" id="markdown-toc-building-and-installing-the-package">Building and installing the Package</a></li>
+      <li><a href="#adding-your-package-in-the-nixpkgs-main-repository" id="markdown-toc-adding-your-package-in-the-nixpkgs-main-repository">Adding your package in the nixpkgs main repository</a></li>
+      <li><a href="#apendix-tips" id="markdown-toc-apendix-tips">Apendix: Tips</a>        <ul>
+          <li><a href="#contributing" id="markdown-toc-contributing">Contributing</a></li>
+          <li><a href="#more-with-nix-shell" id="markdown-toc-more-with-nix-shell">More with nix-shell</a></li>
+          <li><a href="#unfree-packages" id="markdown-toc-unfree-packages">Unfree packages</a></li>
+          <li><a href="#warnings-treated-as-errors" id="markdown-toc-warnings-treated-as-errors">Warnings treated as errors</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#nix-for-hpc-multiuser-mode" id="markdown-toc-nix-for-hpc-multiuser-mode">Nix for HPC (multiuser mode)</a></li>
+  <li><a href="#authors" id="markdown-toc-authors">Authors</a></li>
+</ul>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Introduction of this tutorial is currently in French, as the following PDF presentation:</p>
+
+<p><a href="https://github.com/Gricad/calcul/raw/master/tuto_nix/media/NixIntroJDEV2017.pdf">NIX tutorial introduction</a>.</p>
+
+<h1 id="using-nix-packages-manager">Using Nix packages manager</h1>
+
+<blockquote>
+  <p><em>In this first section, you will learn</em>:</p>
+
+  <ul>
+    <li><em>how to <strong>install</strong> nix on your laptop,</em></li>
+    <li><em>how to <strong>setup</strong> properly your working environment to use nix <strong>profiles</strong>,</em></li>
+    <li><em>and obviously how to <strong>remove</strong> nix properly and completely.</em></li>
+  </ul>
+</blockquote>
+
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+  <li>Linux (64bits) / Mac OS</li>
+  <li>Be a sudoer or have root access.</li>
+  <li>Bash, curl installed</li>
+</ul>
+
+<p>If this prerequisites are not fullfilled or if you don’t want to install nix on your system, you may
+try to run this tutorial inside a docker container. Try the following link, wich provides a Dockerfile and some directives :</p>
+
+<ul>
+  <li><em><a href="https://github.com/Gricad/calcul/tree/master/tuto_nix/docker/debian_nix_tuto">Optional docker image for this tutorial</a></em></li>
+</ul>
+
+<h2 id="install-nix-single-user-mode">Install Nix (single user mode)</h2>
+<p><strong>Source</strong> : <a href="http://nixos.org/nix/manual/#chap-installation">http://nixos.org/nix/manual/#chap-installation</a></p>
+
+<p>In a terminal, run :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash &lt;<span class="o">(</span>curl https://nixos.org/nix/install<span class="o">)</span>
+</code></pre></div></div>
+
+<p>From this point, you should see something like this :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash &lt;<span class="o">(</span>curl https://nixos.org/nix/install<span class="o">)</span>
+<span class="o">[</span>...]
+performing a single-user installation of Nix...
+copying Nix to /nix/store...............................
+initialising Nix database...
+creating /home/&lt;your_login&gt;/.nix-profile
+installing ‘nix-1.11.9’
+building path<span class="o">(</span>s<span class="o">)</span> ‘/nix/store/7dv1lghxz40rbvv9ffg7fq2as972a4r7-user-environment’
+created 6 symlinks <span class="k">in </span>user environment
+downloading Nix expressions from ‘https://d3g5gsiof5omrk.cloudfront.net/nixpkgs/nixpkgs-17.09pre106045.7369fd0b51/nixexprs.tar.xz’...
+downloading ‘https://d3g5gsiof5omrk.cloudfront.net/nixpkgs/nixpkgs-17.09pre106045.7369fd0b51/nixexprs.tar.xz’... <span class="o">[</span>6977/8550 KiB, 3474.3 KiB/s]
+unpacking channels...
+created 2 symlinks <span class="k">in </span>user environment
+
+Installation finished!  To ensure that the necessary environment
+variables are <span class="nb">set</span>, either log <span class="k">in </span>again, or <span class="nb">type</span>
+
+  <span class="nb">.</span> /home/&lt;your_login&gt;/.nix-profile/etc/profile.d/nix.sh
+
+<span class="k">in </span>your shell.
+</code></pre></div></div>
+
+<p>The Nix package manager is now installed on your system and ready to be used.</p>
+
+<p>The installation process only populates the directory <code class="highlighter-rouge">/nix</code> and creates a symbolic link <code class="highlighter-rouge">~/.nix-profile</code> in your home directory.</p>
+
+<p>Check their contents and try</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-al</span> ~/.nix-profile
+<span class="nb">ls</span> <span class="nt">-al</span> /nix
+</code></pre></div></div>
+
+<p><em>Remark : If you don’t have sudo installed or if you’re not a sudoer, before installing nix, run as root :</em></p>
+
+<p><code class="highlighter-rouge">mkdir -m 0755 /nix &amp;&amp; chown &lt;your_login&gt; /nix</code></p>
+
+<h2 id="uninstall-nix">Uninstall Nix</h2>
+<p>Nix does not spread out all over your system, so you can easily uninstall it completely by doing:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>rm <span class="nt">-rf</span> /nix
+rm <span class="nt">-rf</span> ~/.nix-<span class="k">*</span>
+</code></pre></div></div>
+
+<h2 id="working-with-profiles--create-several-user-environments">Working with profiles : create several user environments</h2>
+
+<p>At this stage, nix is properly installed on your system, but some 
+extra configuration is required, especially to activate the “profiles” 
+feature.</p>
+
+<p>As explained in the introduction of this tutorial, a <strong>profile</strong>
+ is some kind of user-defined environment, where you’ll be able to 
+‘install’ and use a specific set of your choice of libraries, tools, 
+binaries …</p>
+
+<p>Consider for instance, the three profiles defined in the table below:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>profiles</strong></th>
+      <th><strong>installed packages</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>“my soft based on intel compilers” :</strong></td>
+      <td>intel-devel 2015, mysoft-release-intel</td>
+    </tr>
+    <tr>
+      <td><strong>“my soft based on gnu compilers”</strong> :’</td>
+      <td>gcc-wrapper-6.3.0, mysoft-release-gnu</td>
+    </tr>
+    <tr>
+      <td><strong>“my soft, debug mode, based on gnu compilers’ :</strong></td>
+      <td>gcc-wrapper-6.3.0, mysoft-debug-gnu, valgrind</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In that case, assuming you have defined these profiles, you can 
+switch easily between three different setups of the same software 
+(mysoft), without any interference between them.
+Notice that each user can have as many profiles as he wants.</p>
+
+<p>To activate this profile feature, we need to copy and update the nix.sh file provided by the installer:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cp /nix/var/nix/profiles/default/etc/profile.d/nix.sh ~/nix.sh
+<span class="nb">echo</span> <span class="s2">"export PATH=/nix/var/nix/profiles/default/bin:</span><span class="se">\$</span><span class="s2">PATH"</span> <span class="o">&gt;&gt;</span> ~/nix.sh
+<span class="nb">echo</span> <span class="s2">"export NIX_USER_PROFILE_DIR=/nix/var/nix/profiles/per-user/</span><span class="se">\$</span><span class="s2">USER "</span> <span class="o">&gt;&gt;</span> ~/nix.sh
+<span class="c"># If you are under MACOS, also add:</span>
+<span class="nb">echo</span> <span class="s2">"export NIX_SSL_CERT_FILE=/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt"</span> <span class="o">&gt;&gt;</span> ~/nix.sh
+</code></pre></div></div>
+
+<p><em>Notice the environment variable NIX_USER_PROFILE_DIR that  will 
+be used later to define profiles. Under NiXOS or on some properly 
+installed multi-user sites, this variable might be already set properly 
+during install.</em></p>
+
+<p>Finally, load nix environment:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> ~/nix.sh
+</code></pre></div></div>
+<p>You can safely add this line into the initialization script of your shell (for example <code class="highlighter-rouge">~/.bashrc</code>).</p>
+
+<p>The installation and configuration process is over and you’re ready to use nix.</p>
+
+<p>Your current profile is defined by the the .nix-profile symbolic link in your home directory.
+Nix automaticaly creates your first “default” profile : it’s a symbolic link pointing to <strong>/nix/var/nix/profiles/default</strong>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-l</span> ~/.nix-profile
+lrwxr-xr-x  1 &lt;your_login&gt;  staff  29 15 nov  2016 .nix-profile -&gt; /nix/var/nix/profiles/default
+</code></pre></div></div>
+
+<p>To create a new profile, use <em>nix-env</em> command (remind that NIX_USER_PROFILE_DIR has been set to /nix/var/nix/profiles/per-user/<your_login>), for instance:</your_login></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">--switch-profile</span> <span class="nv">$NIX_USER_PROFILE_DIR</span>/tuto-jdev
+</code></pre></div></div>
+
+<p>and check:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-l</span> ~/.nix-profile
+lrwxr-xr-x ... .nix-profile -&gt; /nix/var/nix/profiles/per-user/&lt;your-login&gt;/tuto-jdev
+</code></pre></div></div>
+
+<p>Note: <em>For the moment, this link may point to a non-existent 
+directory as you don’t have installed any package yet. The profile 
+directory will be created at the first installation of a package, you’ll
+ see that in the next few lines of this tutorial!</em></p>
+
+<p>You can now work with differents profiles and switch between them and
+ have as many profiles as you want. That way, you can have many 
+environments. Once you’ll be familiar to Nix, you’ll see that you’ll 
+switch to a new profile each time you’re starting something new! And you
+ will miss this on other systems ;-)</p>
+
+<blockquote>
+  <p>Summary</p>
+  <ul>
+    <li>Always create one (or more) profile(s), to organise properly your different environments</li>
+    <li>What is my current profile?
+<code class="highlighter-rouge">ls -al ~/.nix-profile</code></li>
+    <li>Create/switch between profiles?
+<code class="highlighter-rouge">nix-env --switch-profile $NIX_USER_PROFILE_DIR/some_name</code></li>
+    <li>What are my available profiles?
+<code class="highlighter-rouge">ls -al $NIX_USER_PROFILE_DIR</code></li>
+  </ul>
+</blockquote>
+
+<h1 id="nix-basics">Nix basics</h1>
+
+<blockquote>
+  <p>In this section, you will learn …</p>
+  <ul>
+    <li>how to install, remove, update a package,</li>
+    <li>how to list and find packages,</li>
+    <li>how to check, rollback your profile.</li>
+  </ul>
+</blockquote>
+
+<p>At this point it’s important to understand the underlying mechanisms of nix for libraries installation and management.
+Nix is made to allow different users to have different configurations and to switch between them but
+with <em>one and only one place where everything is installed</em> : /nix.</p>
+
+<p>One of the main benefits of using nix is that any user (understand non-root) is allowed to “install”
+packages in /nix. These packages will be available in the user environment through some trees of symlink
+between /nix and ~/.nix-profile and ready to be used by any other user.</p>
+
+<p>Moreover, thanks to profiles, a single user can easily switch between different configurations.</p>
+
+<p>Let us start using Nix with our new “tuto-jdev” profile. Make sure you’re using the right profile :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">--switch-profile</span> <span class="nv">$NIX_USER_PROFILE_DIR</span>/tuto-jdev
+</code></pre></div></div>
+
+<p>From that point, every new installed package will be available under this profile. 
+The operation above just updates the link between ~/.nix-profile and some directories in /nix</p>
+
+<p>Once again, check your profile and the linked directory:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-altr</span> ~/.nix-profile
+</code></pre></div></div>
+
+<h2 id="search-install-remove-a-package-with-nix">Search, install, remove a package with nix</h2>
+
+<p>Most of nix operations are carried out using <code class="highlighter-rouge">nix-env</code> command.</p>
+
+<p>To install a package, use <code class="highlighter-rouge">nix-env -i &lt;somename&gt;</code>. For instance:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~<span class="nv">$ </span>nix-env <span class="nt">-i</span> hello
+installing ‘hello-2.10’
+...
+</code></pre></div></div>
+
+<p>And the ‘hello’ binary is now available in your path:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~<span class="nv">$ </span>hello
+Hello, world!
+~<span class="nv">$ </span>which hello
+/home/&lt;your_login&gt;/.nix-profile/bin/hello
+</code></pre></div></div>
+
+<p>Sounds as if ‘hello’ has been installed in your home directory.
+But if you try</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-altr</span> ~/.nix-profile/bin
+</code></pre></div></div>
+
+<p>you will get something like</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+.nix-profile/bin -&gt; /nix/store/3dlqv87hrrfjynj0brbn4h71g4g4g89z-hello-2.10/bin
+</code></pre></div></div>
+
+<p>Indeed, depending on what has been previously done on your system, 
+the ```nix-env -i`` command will either download the corresponding 
+package, install it
+in /nix/store and finally create the required links in your profile 
+(.nix-profile/ …) or just create the links, if the package is already 
+in /nix/store (previous install by you or another user).</p>
+
+<p>It means that hello binary is installed “system wide”, in /nix/store,
+ although you’re not root, which is one of the very interesting features
+ of nix : you do not depend
+on some administrator to install and setup your working environment.</p>
+
+<p>To remove a package, once again call <code class="highlighter-rouge">nix-env</code> with ‘erase’ option:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-e</span> hello
+uninstalling ‘hello-2.10’
+</code></pre></div></div>
+
+<p>hello has disappear from your path:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hello
+<span class="nt">-bash</span>: hello: <span class="nb">command </span>not found
+</code></pre></div></div>
+
+<p>and from your profile</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-altr</span> ~/.nix-profile/bin
+<span class="nb">ls</span>: .nix-profile/bin: No such file or directory
+</code></pre></div></div>
+
+<p>But hello is still present in /nix/store:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span>  /nix/store/<span class="k">*</span>hello<span class="k">*</span>
+/nix/store/bh26bk4rcqlxja3chgn6a3jv7yiqshg4-hello-2.10:
+bin   share
+</code></pre></div></div>
+
+<p>And if you reinstall it, no download or install occurs, it only 
+creates symbolic links in your .nix-profile. Try install and check 
+output:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~<span class="nv">$ </span>nix-env <span class="nt">-i</span> hello
+installing ‘hello-2.10’
+...
+</code></pre></div></div>
+
+<p>Well, hello package is very interesting but you’re likely to search for a specific package, say for instance boost.</p>
+
+<p>A complete list of all available packages, in the nix store, is returned by the command</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-qaP</span>
+
+... <span class="k">**</span>very long list<span class="k">**</span>
+</code></pre></div></div>
+
+<p>Note: <em>qaP : q as query, a as available and P as preserve-installed</em></p>
+
+<p>A smarter usage of this command combined it with a grep to target a specific program or library:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env -qaP | grep boost
+nixpkgs.boost155                                                  boost-1.55.0
+nixpkgs.boost159                                                  boost-1.59.0
+nixpkgs.boost160                                                  boost-1.60.0
+nixpkgs.python27Packages.boost                                    boost-1.62.0
+nixpkgs.python36Packages.boost                                    boost-1.62.0
+nixpkgs.boost                                                     boost-1.62.0
+nixpkgs.boost163                                                  boost-1.63.0
+nixpkgs.boost-build                                               boost-build-2.0-m12
+nixpkgs.boost_process                                             boost-process-0.5
+nixpkgs.pianobooster                                              pianobooster-0.6.4b
+nixpkgs.python27Packages.xgboost                                  python2.7-xgboost-0.60
+nixpkgs.python36Packages.xgboost                                  python3.6-xgboost-0.60
+nixpkgs.xgboost                                                   xgboost-0.60
+</code></pre></div></div>
+
+<p>Ok, now you’re able to choose the boost version that fits you. Notice
+ on the right column, the complete name of the package and on the left 
+column, the attributes of the package (channel and components name 
+between dots).</p>
+
+<p>As explained in the introduction a <strong>channel</strong> is no more than a “snapshot” of the nixpkgs reference repository.</p>
+
+<p>The <strong>components</strong> attribute is important since it 
+allows you to distinguish different configurations of the same library. 
+Here for example, you can choose between different versions of boost 
+(1.55, 1.59 …)
+or between different configurations of the same version of boost (1.62 
+with or without python and with python 2 or python 3 bindings).</p>
+
+<p>Notice also that different packages (different by their attributes) may have the same name (e.g. boost-1.62.0).</p>
+
+<p>==&gt; a good pratice : always use install with complete attributes list to avoid confusion and unexpected behavior.</p>
+
+<p>Choose one version and try to install it by calling <code class="highlighter-rouge">nix-env -i</code> followed by the <strong>name</strong> of the package. For instance:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-i</span> boost-1.60.0
+</code></pre></div></div>
+
+<p>Try also an explicit call, with <strong>attributes</strong>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-iA</span> nixpkgs.boost160
+</code></pre></div></div>
+
+<p>Check the consequences of these installations in ~/.nix-profile:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-ld</span> ~/.nix-profile/lib
+  .nix-profile/lib -&gt; /nix/store/h4c1bmm3qk0vifhs3xd5p6c8apciv1gq-boost-1.60.0/lib
+
+</code></pre></div></div>
+
+<p>Let us install another library, to populate a bit more our profile:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-iA</span> nixpkgs.openblas
+</code></pre></div></div>
+
+<p>Now, check again your profile:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-ld</span> ~/.nix-profile/lib
+  .nix-profile/lib
+</code></pre></div></div>
+
+<p>Since only one package with a lib path was installed, the <em>lib</em> directory in your profile was just a link to the same directory in  <em>boost</em> package from nix store. But now that we have another package having a <em>lib</em>
+ directory too, lib in your profile becomes a real directory, where nix 
+created a bunch of symbolic links to the shared libraries in nix store:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-altr</span> ~/.nix-profile/lib/libboost_atomic.<span class="k">*</span>
+  .nix-profile/lib/libboost_atomic.so -&gt; /nix/store/h4c1bmm3qk0vifhs3xd5p6c8apciv1gq-boost-1.60.0/lib/libboost_atomic.so
+<span class="nb">ls</span> <span class="nt">-altr</span> ~/.nix-profile/lib/libopenblas.<span class="k">*</span>
+  .nix-profile/lib/libopenblas.so -&gt; /nix/store/jxm1c9ks0bkfzkv40jwgwv4yxg0paxkq-openblas-0.2.19/lib/libopenblas.so
+</code></pre></div></div>
+
+<p>Take a look at the dependencies :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldd ~/.nix-profile/lib/libboost_atomic.so
+<span class="c"># or if you use MAC OS:</span>
+otool <span class="nt">-L</span> ~/.nix-profile/lib/libboost_atomic.dylib
+        linux-vdso.so.1 <span class="o">(</span>0x00007fff2c9cd000<span class="o">)</span>
+        librt.so.1 <span class="o">=&gt;</span> /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/librt.so.1 <span class="o">(</span>0x00007f2fe05b7000<span class="o">)</span>
+        libstdc++.so.6 <span class="o">=&gt;</span> /nix/store/xfrkm34sk0a13ha9bpki61l2k5g1v8dh-gcc-5.4.0-lib/lib/libstdc++.so.6 <span class="o">(</span>0x00007f2fe023f000<span class="o">)</span>
+        libm.so.6 <span class="o">=&gt;</span> /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libm.so.6 <span class="o">(</span>0x00007f2fdff2c000<span class="o">)</span>
+        libgcc_s.so.1 <span class="o">=&gt;</span> /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libgcc_s.so.1 <span class="o">(</span>0x00007f2fdfd16000<span class="o">)</span>
+        libpthread.so.0 <span class="o">=&gt;</span> /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libpthread.so.0 <span class="o">(</span>0x00007f2fdfaf6000<span class="o">)</span>
+        libc.so.6 <span class="o">=&gt;</span> /nix/store/f111ij1fc83965m48bf2zqgiaq88fqv5-glibc-2.25/lib/libc.so.6 <span class="o">(</span>0x00007f2fdf757000<span class="o">)</span>
+        /lib64/ld-linux-x86-64.so.2 <span class="o">(</span>0x0000560272cb0000<span class="o">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>libraries for <em>boost</em>, <em>blas</em>, and the <em>hello</em> binary are now available in your local (profile) environment</li>
+  <li>this environment (.nix-profile) contains only symbolic links</li>
+  <li>everything has been installed in /nix</li>
+</ul>
+
+<h2 id="list-installed-packages">List installed packages</h2>
+<p>To list installed packages in your current profile type :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-qs</span>
+</code></pre></div></div>
+
+<h2 id="profile-rollback-and-generations">Profile rollback and generations</h2>
+
+<p>Each time you perform a Nix operation in your profile, it creates a new <strong>generation</strong> of it. 
+This concept of generation in profiles allows you to rollback to any previous state:</p>
+
+<p>first check the  entire profile history (called “links generations”) :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">--list-generations</span>
+</code></pre></div></div>
+
+<p>and then switch either to the previous step in profile or step to a chosen state:</p>
+
+<p>Back to previous step:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~<span class="nv">$ </span>nix-env <span class="nt">-q</span>
+boost-1.60.0
+hello-2.10
+openblas-0.2.19
+~<span class="nv">$ </span>nix-env <span class="nt">--rollback</span>
+switching from generation 5 to 4
+~<span class="nv">$ </span>nix-env <span class="nt">-q</span>
+boost-1.60.0
+hello-2.10
+</code></pre></div></div>
+<p>As you can see, the last package we installed is no more here.</p>
+
+<p>Back to a chosen step (assuming 3 is an existing stage in your list-generations)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">--switch-generation</span> 3
+</code></pre></div></div>
+
+<h2 id="update-packages">Update packages</h2>
+
+<p>The following command will update the named package and all its dependencies :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-env <span class="nt">-uA</span> the_package_you-re_searching_for
+</code></pre></div></div>
+<p>And if the new version of the package  does not work, you can allways do a “–rollback”!</p>
+
+<h2 id="channel-and-nix_path">Channel and NIX_PATH</h2>
+<p>To understand the <em>channel</em> concept, it might be useful to understand how the NIX_PATH environment variable is used. Take a look at it:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="nv">$NIX_PATH</span>
+  <span class="nv">nixpkgs</span><span class="o">=</span>/home/&lt;your_login&gt;/.nix-defexpr/channels/nixpkgs
+</code></pre></div></div>
+<p>In your default environment, it contains only one <em>channel</em> definition, the <em>nixpkgs</em> one. It gives a PATH that is actualy a link to the store:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>readlink ~/.nix-defexpr/channels/nixpkgs
+  /nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-17.09pre109811.ce88027294/nixpkgs
+</code></pre></div></div>
+
+<p>And this is where the channel currently used lives (remember: <em>nix-env -iA <strong>nixpkgs</strong>.boost160</em>). In this directory, you can find all the files (called <em>expressions</em>, we’ll see that later) with the code of the packages of the <em>Nixpkgs</em> distribution, and the code of the builtin tools (builders, patching tools, …). 
+For example, let’s search for the code of the hello package:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find ~/.nix-defexpr/channels/nixpkgs/ <span class="nt">-name</span> hello
+</code></pre></div></div>
+<p>A file is particularily interesting to look at: <code class="highlighter-rouge">all-packages.nix</code>. It’s the file where the default attributes of the packages are defined (what you put just after <em>nix-env -iA</em>). For example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">grep </span>hello ~/.nix-defexpr/channels/nixpkgs/pkgs/top-level/all-packages.nix
+</code></pre></div></div>
+
+<p>This is not necessary to go further at this point, but remember that 
+any time you wonder what is made inside a package, or how packages are 
+called, you can take a look at this directory.</p>
+
+<p>By the way, notice that the name of the directory can be used to 
+check the version of the nixpkgs channel you are using. In our example 
+it is <em>17.09pre109811</em> (<em>/nix/store/civk55fs0p07kjnvgjqfdvgws2qvxyq2-nixpkgs-<strong>17.09pre109811</strong>.ce88027294/nixpkgs</em>)</p>
+
+<blockquote>
+  <p>Summary</p>
+  <ul>
+    <li>Search for packages with <code class="highlighter-rouge">nix-env -qaP |grep ...</code></li>
+    <li>Install packages with <code class="highlighter-rouge">nix-env -i &lt;package_name&gt;</code> or <code class="highlighter-rouge">nix-env -iA &lt;attribute&gt;</code></li>
+    <li>List installed packages with <code class="highlighter-rouge">nix-env -q</code></li>
+    <li>Remove packages with <code class="highlighter-rouge">nix-env -e &lt;package&gt;</code></li>
+    <li>
+      <p>Rollback or jump to a specific version of your profile with</p>
+
+      <p><code class="highlighter-rouge">nix-env --rollback</code> or <code class="highlighter-rouge">nix-env --switch-generation &lt;id&gt;</code></p>
+    </li>
+  </ul>
+</blockquote>
+
+<h1 id="package-development">Package development</h1>
+
+<blockquote>
+  <p>In this section, you will learn:</p>
+  <ul>
+    <li>What is a Nix expression and a Nix derivation</li>
+    <li>How to create a local package</li>
+    <li>How to debug a package and how the native builder works</li>
+  </ul>
+</blockquote>
+
+<p>Under a Nix environment, creating a package is often the best way to 
+install an application. You should not be afraid about that, it is very 
+easy and satisfying. How many times have you installed a software, 
+locally on your home, and when it’s been done, you can’t remember how 
+you did? If you do this directly by creating a Nix package, you can’t 
+forget as everything will be described. Your application is built inside
+ an isolated environment, with no dependency with the system. 
+Furthermore, you can pass your package to a colleague, or to the Nix 
+community!</p>
+
+<h2 id="your-first-nix-expression-a-basic-hello-package">Your first Nix expression: a basic ‘‘hello’’ package</h2>
+
+<p>A package is  built from a nix “expression”. Nix expressions describe
+ the actions to build packages (getting the sources, patching, 
+compiling, installing…).</p>
+
+<p>Here is a sample expression for a basic packaging of the ‘‘hello’’ program:</p>
+
+<pre><code class="language-Nix">{ pkgs ? import &lt;nixpkgs&gt; {} }:
+with pkgs;
+
+let
+  inherit stdenv fetchurl perl;
+  version = "2.1.1";
+in
+{
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
+    buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
+    src = fetchurl {
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
+    };
+  };
+}
+</code></pre>
+
+<p>We can see 3 main blocks:</p>
+<ul>
+  <li>In the first block, we basically tell that we are going to import 
+the whole ‘nixpkgs’ set of builtin functions and packages that are 
+available into your Nix environment. This is where the <code class="highlighter-rouge">$NIX_PATH</code> environment variable seen earlier makes sense.</li>
+  <li>In the next block, we are setting up attributes that will be available inside the third block</li>
+  <li>The last block consists of the actual creation of the package: the <em>derivation</em>. A derivation is the name given by Nix to create something from other stuff. The builtin function <em>.mkDerivation</em>, provided by <em>stdenv</em>, is used to create a package starting from attributes which are key/value pairs.</li>
+</ul>
+
+<p>Some attributes are required (like <em>name</em>). A lot of others are optional. It is the case of <em>builder</em>
+ for example, that is not present in this example as we will use the 
+builtin standard builder. The builder is the part of the packaging that 
+creates the executables, typically “configure, make, make install”. The <em>buildInputs</em>
+ attribute defines a list describing all the other packages required as a
+ dependency for the build. In this example, we need “perl” during the 
+build, so the “perl” package will be available into the build 
+environment during the creation of this hello package.</p>
+
+<p>Finally, the <em>src</em> attribute defines the sources of our program to build. It makes use here of the <em>fetchurl</em> builtin function provided by stdenv to get the sources from a url and check the integrity with a provided hash.</p>
+
+<h3 id="lets-build-our-package">Let’s build our package!</h3>
+
+<p>Create a test directory and put the nix expression in a hello.nix file:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir test
+$ cd test
+$ vi hello.nix
+</code></pre></div></div>
+
+<p>Then build the package:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ nix-build hello.nix
+</code></pre></div></div>
+
+<p>The first time you start such a build, you should normally see Nix 
+downloading packages that are required for this operation. Then, the 
+sources of the hello program are fetched, then built. A 
+post-installation script is automatically started to eventually fix the 
+runpath (RPATH) of the binaries and libraries, and fix the interpreter 
+paths of every scripts to ensure that every dependency will be resolved 
+from the /nix store.</p>
+
+<p>Note: <em>nix-build provides a convenient <code class="highlighter-rouge">--keep-failed, -K</code>
+ option to keep the temporary build directory in case things goes wrong,
+ so you can inspect the logs if any. But we’ll see later another 
+powerful tool to debug failures…</em></p>
+
+<p>A new link ‘‘result’’ has been created into the current directory. 
+The destination of the link is the directory of the created package into
+ the store.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls -al result/bin/
+total 16
+dr-xr-xr-x 2 tuto tuto    19 janv.  1  1970 .
+dr-xr-xr-x 4 tuto tuto    30 janv.  1  1970 ..
+-r-xr-xr-x 1 tuto tuto 13552 janv.  1  1970 hello
+
+$ ./result/bin/hello
+Bonjour, le monde!
+</code></pre></div></div>
+
+<p>Installing the package is simple as:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ nix-env -i ./result
+installing ‘hello-2.1.1’
+building path(s) ‘/nix/store/dqv9d96xmimb7xq4wj1jm3j7w4i9ik49-user-environment’
+created 500 symlinks in user environment
+
+$ hello --version
+hello - GNU hello 2.1.1
+
+</code></pre></div></div>
+
+<p>What about trying to build again the same package?</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rm result
+nix-build ./hello.nix
+</code></pre></div></div>
+
+<p>Well, as we changed nothing into the source code, the hash of our 
+compiled expression is the same. So, Nix does nothing! It has just 
+re-created the <code class="highlighter-rouge">./result</code> link to 
+the corresponding package into the store. It means that if another user 
+creates the same package as you just did, no re-build is trigged and the
+ binaries will be efficiently shared!</p>
+
+<h3 id="debugging-with-nix-shell">Debugging with nix-shell</h3>
+
+<p>It’s easy when all goes well… but how to deal things when the build process does not work as expected?</p>
+
+<p>Let’s introduce a bug into our expression. Simply comment the line 
+with the buildInputs attribute, to remove the needed dependency with 
+perl:</p>
+
+<pre><code class="language-Nix">{ pkgs ? import &lt;nixpkgs&gt; {} }:
+with pkgs;
+
+let
+  inherit stdenv fetchurl perl;
+  version = "2.1.1";
+in
+{
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
+#    buildInputs = [ perl ];
+    hardeningDisable = [ "format" ];
+    src = fetchurl {
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
+    };
+  };
+}
+</code></pre>
+
+<p>Then, re-build the package:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-build ./hello.nix
+</code></pre></div></div>
+
+<p>Now, it should fail with:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>...]
+make[2]: Entering directory <span class="s1">'/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1/man'</span>
+help2man <span class="nt">--name</span><span class="o">=</span><span class="s2">"Friendly Greeting Program"</span> ../src/hello <span class="o">&gt;</span>hello.1
+/nix/store/wb34dgkpmnssjkq7yj4qbjqxpnapq0lw-bash-4.4-p12/bin/bash: help2man: <span class="nb">command </span>not found
+make[2]: <span class="k">***</span> <span class="o">[</span>Makefile:282: hello.1] Error 127
+make[2]: Leaving directory <span class="s1">'/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1/man'</span>
+make[1]: <span class="k">***</span> <span class="o">[</span>Makefile:175: all-recursive] Error 1
+make[1]: Leaving directory <span class="s1">'/tmp/nix-build-hello-2.1.1.drv-0/hello-2.1.1'</span>
+make: <span class="k">***</span> <span class="o">[</span>Makefile:131: all] Error 2
+builder <span class="k">for</span> ‘/nix/store/zsp5846wm86p3fb408knmpa9nfl8k8lr-hello-2.1.1.drv’ failed with <span class="nb">exit </span>code 2
+error: build of ‘/nix/store/zsp5846wm86p3fb408knmpa9nfl8k8lr-hello-2.1.1.drv’ failed
+</code></pre></div></div>
+
+<p>Ok, then, we need to go deeper into the build process to see exactly 
+where it fails. The built-in builder defines several phases executed in a
+ specific order:  <em>unpackPhase patchPhase configurePhase buildPhase checkPhase installPhase fixupPhase</em>.
+ Actually, there are more phases, allowing you more control of what is 
+done before each main phase, but let’s keep it simple ;-). Those phases 
+are defined as bash functions into the shell executed when you start 
+nix-build. And guess what, you can go into this shell! It’s called <em>nix-shell</em>
+ and it creates a completely isolated environment, with all the 
+variables configured depending on the attributes you have put into your 
+derivation.</p>
+
+<p>Let’s try it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-shell <span class="nt">--pure</span> ./hello.nix
+<span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span>
+</code></pre></div></div>
+
+<p>From that point, let’s check some interesting things.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span><span class="nb">echo</span> <span class="nv">$out</span>
+</code></pre></div></div>
+
+<p>OK, you’ve got a variable defining the path of the store where your 
+package will be installed! If you write your own builder, you would 
+probably do something like <code class="highlighter-rouge">./configure --prefix $out</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span><span class="nb">echo</span> <span class="nv">$PATH</span>
+</code></pre></div></div>
+
+<p>What a long list! Yes, this path contains directories of packages needed to build something, like for example a GCC compiler.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span>unpackPhase
+</code></pre></div></div>
+
+<p>This magically get the source code and unpack it into your current directory!</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span><span class="nb">cd</span> <span class="nv">$sourceRoot</span>
+<span class="o">[</span>nix-shell:~/test/hello-2.1.1]<span class="nv">$ </span>patchPhase
+<span class="o">[</span>nix-shell:~/test/hello-2.1.1]<span class="nv">$ </span>configurePhase
+</code></pre></div></div>
+
+<p>Got it? We are executing, phase by phase, the builtin builder.</p>
+
+<p>Note: <em>For cmake fans, don’t worry: if you put cmake into your 
+buildInputs dependencies, the builder provides a cmakeConfigurePhase and
+ cmakeBuildPhase to start the appropriate build process, and of course, 
+you can provide a cmakeFlags attribute</em></p>
+
+<p>And this is where things get wrong:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test/hello-2.1.1]<span class="nv">$ </span>buildPhase
+</code></pre></div></div>
+
+<p>If you take a look into the <code class="highlighter-rouge">man</code> directory, you’ll see the <code class="highlighter-rouge">help2man</code> script starting with a call to <code class="highlighter-rouge">perl</code> which is why we had <em>perl</em> as a buildInput dependency. But actually, here the error is that <code class="highlighter-rouge">help2man</code> is not found. I suppose that this script is used as a fallback when no <code class="highlighter-rouge">help2man</code> command is provided by the system. It might be cleaner to provide help2man instead of a full perl dependency.
+So, let’s add the nix <code class="highlighter-rouge">help2man</code> package as a dependency to check if it may work.</p>
+
+<p>First, clean and exit from the nix-shell</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~/test/hello-2.1.1]<span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span>rm <span class="nt">-rf</span> hello-2.1.1/
+<span class="o">[</span>nix-shell:~/test]<span class="nv">$ </span><span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>Then, comment out the line you commented earlier, and replace <em>perl</em> by <em>help2man</em>:</p>
+
+<pre><code class="language-Nix">{ pkgs ? import &lt;nixpkgs&gt; {} }:
+with pkgs;
+
+let
+  inherit stdenv fetchurl help2man;
+  version = "2.1.1";
+in
+{
+    hello = stdenv.mkDerivation rec {
+    name = "hello-${version}";
+    buildInputs = [ help2man ];
+    hardeningDisable = [ "format" ];
+    src = fetchurl {
+      url = "ftp://ftp.nluug.nl/pub/gnu/hello/${name}.tar.gz";
+      sha256 = "c510e3ad0200517e3a14534e494b37dc0770efd733fc35ce2f445dd49c96a7d5";
+    };
+  };
+}
+</code></pre>
+
+<p>Then build!</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-build  ./hello.nix
+</code></pre></div></div>
+
+<blockquote>
+  <p>Summary</p>
+
+  <ul>
+    <li>a package is made by writting a <em>nix expression</em> into a file</li>
+    <li><em>stdenv.mkDerivation</em> is a powerful function used to create a new package with a lot of possible attributes. See the <a href="http://nixos.org/nix/manual/#chap-writing-nix-expressions">Writing Nix Expressions</a> part of the Nix documentation for more informations</li>
+    <li>use <code class="highlighter-rouge">nix-build</code> to build your package</li>
+    <li>use <code class="highlighter-rouge">nix-shell</code> to enter into the environment of your package, check, debug and build manually</li>
+  </ul>
+</blockquote>
+
+<h1 id="how-to-add-a-package-to-nixpkgs">How to add a package to nixpkgs</h1>
+
+<blockquote>
+  <p>In the previous section, you learned how to create what we call (here at the Gricad team) a <em>local package</em>.
+ That’s a package that is based on the available nixpkgs distribution of
+ your system Nix installation. We will now see how, with very minor 
+differences, a such package could be integrated into the official 
+nixpkgs repository.</p>
+</blockquote>
+
+<h2 id="get-a-local-copy-of-the-nixpkgs-tree">Get a local copy of the nixpkgs tree</h2>
+
+<p>We’ve seen earlier that the packages are described into files located
+ in a directory pointed by the current channel. You can directly get the
+ content of the latest version of this directory by cloning the nixpkgs 
+git repository of NixOS:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone git://github.com/NixOS/nixpkgs.git
+
+Initialized empty Git repository in /home/rochf/nixpkgs/.git/
+</code></pre></div></div>
+
+<p>If this takes too long, you can directly copy your current channel:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Alternative solution for this tutorial, preventing git overload...</span>
+cp <span class="nt">-a</span> ~/.nix-defexpr/channels/nixpkgs/ <span class="nb">.</span>
+find <span class="nb">.</span> <span class="nt">-type</span> d <span class="nt">-exec</span> chmod 755 <span class="o">{}</span> <span class="se">\;</span> 
+</code></pre></div></div>
+
+<p>Then, go to the nixpkgs directory :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>nixpkgs
+</code></pre></div></div>
+
+<p>If you have cloned the Nixos/nixpkgs repository, you should go into a stable branch:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git checkout release-17.03
+</code></pre></div></div>
+
+<h2 id="find-a-good-place-for-your-package-and-write-a-nix-expression">Find a good place for your package and write a nix expression</h2>
+
+<p>You can take a look at the existing Nix expressions in the <code class="highlighter-rouge">pkgs/</code> subtree to see how packages are made. A good start-point is the <code class="highlighter-rouge">pkgs/top-level/all-packages</code> which contains the default calls to all the packages.</p>
+
+<p>For example, if your package is a library, you will probably place it under <code class="highlighter-rouge">pkgs/development/libraries</code> while a monitoring service will be placed under <code class="highlighter-rouge">pkgs/servers/monitoring</code>. Let’s say your package is called “mylib”, then you would create a new <code class="highlighter-rouge">pkgs/development/libraries/mylib</code> directory.</p>
+
+<p>The nix expression of a package is generally put inside a file called <code class="highlighter-rouge">default.nix</code>, so  <code class="highlighter-rouge">pkgs/development/libraries/mylib/default.nix</code> in our example.</p>
+
+<p>Copying the default.nix file of another library and modify it to adapt to your own library, is often a good start.</p>
+
+<p>Once your expression is created, you have to add at least a line into the <code class="highlighter-rouge">pkgs/top-level/all-packages.nix</code> file to define the call to your package.</p>
+
+<p>For your first package, you may also have to add a line to the <code class="highlighter-rouge">lib/maintainers.nix</code> file to add your name and e-mail address. You may also have to check the list of available licenses into the <code class="highlighter-rouge">lib/licenses.nix</code> file.</p>
+
+<p>The <a href="https://nixos.org/nixpkgs/manual/">Nixpkgs Contributors Guide</a> is the reference you should read to know more about writing Nix packages.</p>
+
+<h3 id="example-the-oned-package-derivation">Example: the “oned” package derivation</h3>
+<p>Oned is a program which solves the Poisson equation using Jacobi method.</p>
+
+<p>The code is available at <a href="https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c">https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c</a></p>
+
+<p>Let’s consider the following expression:</p>
+
+<pre><code class="language-Nix">{ stdenv, fetchurl, openmpi }:
+
+stdenv.mkDerivation rec {
+  name = "oned";
+  src = fetchurl {
+     url = "https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c";
+     sha256 = "&lt;HASH_HERE&gt;";
+  };
+
+  buildInputs = [ openmpi ];
+
+  builder = builtins.toFile "builder.sh"
+  "
+  source $stdenv/setup
+  mpicc -w -o oned.exe $src
+  mkdir $out
+  mkdir $out/bin
+  cp oned.exe $out/bin
+  ";
+
+  meta = {
+    description = "JDEV 2017 Nix tutoriel";
+    license     = stdenv.lib.licenses.gpl2;
+    platforms   = stdenv.lib.platforms.unix;
+  };
+}
+</code></pre>
+
+<p>A good place for this expression, seems to be : <code class="highlighter-rouge">pkgs/application/science/physics</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir pkgs/applications/science/physics/oned
+<span class="nv">$ </span>emacs pkgs/applications/science/physics/oned/default.nix
+</code></pre></div></div>
+<p>First of all, you’ll need to compute the SHA-256 hash of your source 
+file, to be sure that your package will always be built from this unique
+ source file. The package built process will put this source file into 
+the NIX store, before actualy building the package. So, to avoid 
+downloading twice, let’s use the convenient <code class="highlighter-rouge">nix-prefetch-url</code> command that does the download operation and the hash calculation, both at the same time:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nix-prefetch-url https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c
+downloading ‘https://www.pdc.kth.se/education/tutorials/mpi/hybrid-lab/oned.c’... <span class="o">[</span>0/0 KiB, 0.0 KiB/s]
+path is ‘/nix/store/iw1xyii9wqb1ly5w95ni7rlwsv4q2pp5-oned.c’
+1585yzy1gkg3bxfg19mh3ag1x7yik2h3lg5kz705d3jk9dhjg03b
+
+</code></pre></div></div>
+
+<p>Or, in case you have already downloaded the source code, use the <code class="highlighter-rouge">sha256sum</code> command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sha256sum oned.c
+</code></pre></div></div>
+<p>Place this hash into the expression, in place of <em><code class="highlighter-rouge">&lt;HASH_HERE&gt;</code></em>.</p>
+
+<p>Regarding the expression, an important attribute is <code class="highlighter-rouge">buildInputs</code> that defines a set of Nix packages dependencies for package build. You may also use <code class="highlighter-rouge">propagatebuildInputs</code> for the dependencies that also need to be present at runtime.</p>
+
+<p>In this example, we have provided our own build script into a 
+“builder” block, because configure and Makefile are not provided. The 
+builder starts with <code class="highlighter-rouge">source $stdenv/setup</code> to setup the environment and process the buidInputs.
+This also set up the <code class="highlighter-rouge">$out</code> variable that gives the location of the package under the Nix store.</p>
+
+<p>Generally, the last part of the expression contains a list of meta 
+attributes.
+Meta attributes contain informations about the package, such a 
+description, license, the reference of the maintainer,…. Check the <a href="http://nixos.org/nixpkgs/manual/#chap-meta">documentation of meta attributes</a> for more information.</p>
+
+<p>Once your expression is written, you have to declare the package in the list of packages :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>emacs ~/nixpkgs/pkgs/top-level/all-packages.nix
+</code></pre></div></div>
+
+<p>Add the following line (in the SCIENCE zone, with respect of the alphabetical order) :</p>
+
+<p><code class="highlighter-rouge">oned = callPackage ../applications/science/physics/oned  { };</code></p>
+
+<h3 id="another-derivation-for-oned">Another derivation for oned</h3>
+
+<p>Here is another example for the same programm, but this time with 
+sources including a standard building process (configure, make, make 
+install) provided as a github repository, using the useful <code class="highlighter-rouge">fetchgit</code> function. So, this time, we do not provide any custom builder, but use the generic one of stdenv.</p>
+
+<pre><code class="language-Nix">{ stdenv, fetchgit, openmpi }:
+
+stdenv.mkDerivation {
+  name = "oned";
+
+  src = fetchgit {
+     url = "https://github.com/pbeys/tuto.git";
+     rev = "0628826361cecebe8767307e417077b5ac279381";
+     sha256 = "1zw0d0jv98bxk9zhkp22f478hc1c3m8dij329lw014283anyq9p3";
+     fetchSubmodules = true;
+  };
+
+  buildInputs = [ openmpi ];
+
+  meta = {
+    description = "JDEV Nix tutoriel";
+    license     = stdenv.lib.licenses.gpl2;
+    platforms   = stdenv.lib.platforms.unix;
+  };
+}
+</code></pre>
+
+<h2 id="building-and-installing-the-package">Building and installing the Package</h2>
+
+<p>The build process is started with the nix-build command:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ nix-build -A oned
+</code></pre></div></div>
+
+<p>This <code class="highlighter-rouge">nix-build -A</code> command uses the attribute path <code class="highlighter-rouge">oned</code> (that you defined into the <code class="highlighter-rouge">all-packages.nix</code> file), to find the derivation and build the package with some eventual options.</p>
+
+<p>As seen earlier with the hello package, the built package is located in the store, in the subdirectory pointed by the <code class="highlighter-rouge">./result</code> link.</p>
+
+<p>You can check that all the dynamically loaded libraries are inside the /nix/store directory:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ldd ./result/bin/oned.exe
+</code></pre></div></div>
+
+<p>Test the executable :</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ oned.exe
+bash: oned.exe : command not found
+</code></pre></div></div>
+
+<p>The oned program is not available. Your environment path is not yet ready, you have to “install” the package.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ nix-env -f . -iA oned
+</code></pre></div></div>
+
+<p>Now we can test the oned program:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ oned.exe 200
+</code></pre></div></div>
+
+<p>Then a MPI run :
+We need a mpi environment to be installed:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ nix-env -i openmpi
+
+$ mpirun -np 2 oned.exe 200
+</code></pre></div></div>
+
+<h2 id="adding-your-package-in-the-nixpkgs-main-repository">Adding your package in the nixpkgs main repository</h2>
+
+<p>Read the <a href="https://nixos.org/nixpkgs/manual/#chap-submitting-changes">Submitting changes part of the Nixpkgs Contributors Guide</a>.
+Basically, you have now to create a pull request to have it reviewed and
+ merged into the master branch of the nixpkgs repository. Of course, the
+ previous work has to be made into a local branch of your nixpkgs clone.</p>
+
+<blockquote>
+  <p>Summary</p>
+
+  <p>In this section, we created another package, this time by including
+ it into a local copy of the nixpkgs distribution. We learned how to 
+import files into the store and getting the corresponding hash with the 
+useful command <code class="highlighter-rouge">nix-prefetch-url</code>. Further reading of the Nixpkgs contributors guide is necessary to learn more in details how to submit your changes.</p>
+</blockquote>
+
+<h2 id="apendix-tips">Apendix: Tips</h2>
+
+<h3 id="contributing">Contributing</h3>
+<p>The <a href="https://github.com/NixOS/nixpkgs/blob/master/.github/CONTRIBUTING.md">CONTRIBUTING.md file</a> contains guidelines for contributing.</p>
+
+<h3 id="more-with-nix-shell">More with nix-shell</h3>
+
+<p><code class="highlighter-rouge">nix-shell</code> can also be used to enter into the environment of one or several existing packages, without even installing them, for example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nix-shell <span class="nt">-p</span> python27 <span class="nt">-p</span> python27Packages.numpy
+</code></pre></div></div>
+<p>opens a shell in an isolated environment which contains python2.7 with the numpy module:
+`</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>nix-shell:~]<span class="nv">$ </span>python <span class="nt">-i</span>
+Python 2.7.13 <span class="o">(</span>default, Dec 17 2016, 20:05:07<span class="o">)</span> 
+<span class="o">[</span>GCC 5.4.0] on linux2
+Type <span class="s2">"help"</span>, <span class="s2">"copyright"</span>, <span class="s2">"credits"</span> or <span class="s2">"license"</span> <span class="k">for </span>more information.
+<span class="o">&gt;&gt;&gt;</span> import numpy
+<span class="o">&gt;&gt;&gt;</span> 
+</code></pre></div></div>
+<p>You can even use nix-shell as the shebang of a script:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#! /usr/bin/env nix-shell
+#! nix-shell -i python27 python27Packages.numpy
+
+import numpy
+...
+</code></pre></div></div>
+
+<h3 id="unfree-packages">Unfree packages</h3>
+
+<p>By default, unfree packages installation is not allowed. We can change this behaviour :</p>
+
+<p>For <code class="highlighter-rouge">nixos-rebuild</code> you can set</p>
+
+<pre><code class="language-Nix">{ nixpkgs.config.allowUnfree = true; }
+</code></pre>
+
+<p>in configuration.nix to override this.</p>
+
+<p>For <code class="highlighter-rouge">nix-env</code>, <code class="highlighter-rouge">nix-build</code>, <code class="highlighter-rouge">nix-shell</code> or any other Nix command you can add</p>
+
+<pre><code class="language-Nix">{ allowUnfree = true; }
+</code></pre>
+
+<p>to your ~/.config/nixpkgs/config.nix.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir .config/nixpkgs
+
+<span class="nv">$ </span>emacs .config/nixpkgs/config.nix
+</code></pre></div></div>
+
+<p>Here’s an example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> .config/nixpkgs/config.nix
+
+<span class="o">{</span>
+
+allowUnfree <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+allowBroken <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+permittedInsecurePackages <span class="o">=</span> <span class="o">[</span>
+       <span class="s2">"libplist-1.12"</span>
+       <span class="s2">"webkitgtk-2.4.11"</span>
+  <span class="o">]</span><span class="p">;</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="warnings-treated-as-errors">Warnings treated as errors</h3>
+
+<p>When compiling the code, some options of the standard environment 
+provided by Nix makes some warnings to be treated as errors. The best 
+thing to do is to create a patch to remove the warning. But, when you 
+don’t have the time to fix, this behavior can be changed, adding this 
+line in your derivation:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hardeningDisable = [ "format" ];
+</code></pre></div></div>
+<p>Then, don’t forget to make a patch later…</p>
+
+<h1 id="nix-for-hpc-multiuser-mode">Nix for HPC (multiuser mode)</h1>
+
+<blockquote>
+  <p>This part is for system administrators, responsible of an HPC cluster.</p>
+
+  <p>If you’re interested, please, check this article that describes the operations to set-up Nix on your Linux HPC system:</p>
+  <ul>
+    <li><a href="https://gricad.github.io/calcul/nix/hpc/2017/05/15/nix-on-hpc-platforms.html">NIX on HPC platforms</a></li>
+  </ul>
+</blockquote>
+
+<h1 id="authors">Authors</h1>
+<p>This tutorial is the result of a long labour by:</p>
+<ul>
+  <li>Frederic Audra</li>
+  <li>Philippe Beys</li>
+  <li>Bruno Bzeznik</li>
+  <li>Franck Perignon</li>
+  <li>Francoise Roch</li>
+  <li>Laure Tavard</li>
+</ul>
+
+<p>Many thanks also to our testers:</p>
+<ul>
+  <li>Pierre-Antoine Bouttier</li>
+  <li>Romain Cavagna</li>
+  <li>Glenn Cougoulat</li>
+  <li>Oliver Henriot</li>
+  <li>Albanne Lecointre</li>
+</ul>
+
+<p>If you want to contact us: <a href="mailto:gricad-contact@univ-grenoble-alpes.fr">gricad-contact at univ-grenoble-alpes.fr</a></p>
+
+  </div>
+
+</article>
+
+
+      </section>
+    </div>
+    <footer>
+    
+      <p>Project maintained by <a href="https://github.com/Gricad">Gricad</a></p>
+    
+      <p>Hosted on GitHub Pages — Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    
+  
+
+</body></html>
