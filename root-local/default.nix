@@ -22,7 +22,7 @@ in
       ;
 
     patches = [
-      ./sw_vers.patch
+      ./sw_vers_unix.patch
     ];
 
     preConfigure = ''
