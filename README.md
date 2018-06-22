@@ -3,9 +3,32 @@ Nix expressions for ROOT
 
 The aim of this repository is to provide Nix expressions for versions of ROOT needed by CDMS.
 
+CDMS requires: ROOT6 compiled with python3 bindings, xml, and fftw.
+
+NOTE!
+
+* Currently these Nix expressions compile ROOT6 with **python2** bindings, xml, and fftw
+* The builds have not been tested with pyroot
+* The build will almost certainly fail on macOS
+
+
 Install Method 1
 ================
-The directory `root-local` contains files for a "local package" install.  This is probably better than the method below - instrutions pending.
+The directory `root-local` contains files for a "local package" install.  This is probably better than the method below.
+
+Build ROOT based on this local Nix expression with:
+
+```
+$ cd root-local
+$ nix-build default.nix
+```
+
+If the expression builds successfully, a `result` directory will appear in the directory from which you invoked `nix-build`.  You can run ROOT with
+
+```
+$ result/bin/root
+```
+
 
 Install Method 2
 ================
