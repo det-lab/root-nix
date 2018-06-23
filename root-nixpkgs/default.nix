@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, cmake, pcre, pkgconfig, python2
+{ stdenv, fetchurl, fetchpatch, cmake, pcre, pkgconfig, python3
 , libX11, libXpm, libXft, libXext, libGLU_combined, zlib, libxml2, lz4, lzma, gsl, xxHash
 , Cocoa, OpenGL, noSplash ? false }:
 
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ cmake pcre python2 zlib libxml2 lz4 lzma gsl xxHash ]
+  buildInputs = [ cmake pcre python3 zlib libxml2 lz4 lzma gsl xxHash ]
     ++ stdenv.lib.optionals (!stdenv.isDarwin) [ libX11 libXpm libXft libXext libGLU_combined ]
     ++ stdenv.lib.optionals (stdenv.isDarwin) [ Cocoa OpenGL ]
     ;
