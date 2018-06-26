@@ -2,7 +2,7 @@
 with pkgs;
 
 let 
-inherit stdenv fetchurl fetchpatch cmake pcre pkgconfig python2 libX11 libXpm libXft libXext libGLU_combined zlib libxml2 lz4 lzma gsl xxHash Cocoa OpenGL;
+inherit stdenv fetchurl fetchpatch cmake pcre pkgconfig python3 libX11 libXpm libXft libXext libGLU_combined zlib libxml2 lz4 lzma gsl xxHash Cocoa OpenGL;
 in
 {
   root = stdenv.mkDerivation rec {
@@ -16,7 +16,7 @@ in
     };
 
     nativeBuildInputs = [ pkgconfig ];
-    buildInputs = [ cmake pcre python2 zlib libxml2 lz4 lzma gsl xxHash ]
+    buildInputs = [ cmake pcre python3 zlib libxml2 lz4 lzma gsl xxHash ]
       ++ stdenv.lib.optionals (!stdenv.isDarwin) [ xlibs.libX11 xlibs.libXpm xlibs.libXft xlibs.libXext libGLU_combined ]
       ++ stdenv.lib.optionals (stdenv.isDarwin) [ Cocoa OpenGL ]
       ;
@@ -59,7 +59,7 @@ in
       "-Dpgsql=OFF"
       "-Dpythia6=OFF"
       "-Dpythia8=OFF"
-      "-Drfio=OFF"
+      "-Drfio=ON"
       "-Dsqlite=OFF"
       "-Dssl=OFF"
       "-Dxml=ON"
